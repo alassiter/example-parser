@@ -1,0 +1,10 @@
+Thought Process
+- Create a Parser class which is instantiated
+  by passing in a text file that needs parsing
+- Loop through each line
+- if its a header make a new key => {}
+- if its a key:value pair, add it to the hash
+- if there's a blank at the beginning, add the line to the previous value
+
+If there's time:
+- Create a Section class that has a header and several settings
