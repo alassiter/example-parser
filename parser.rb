@@ -23,6 +23,9 @@ class Parser
       if header?(line)
         current_header = extract_header(line)
         @data[current_header] = {}
+      elsif key_value?(line)
+        current_key_value = extract_key_value(line)
+        @data[current_header][current_key_value.keys.first] = current_key_value.values.first
       end
     end
     @data

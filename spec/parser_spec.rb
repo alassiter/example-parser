@@ -91,7 +91,10 @@ describe Parser do
   end
 
   describe "create_data" do
-    it "contains headers on first level" do
+    before :each do
+      @parser = Parser.new("config.txt")
+    end
+    it "contains headers" do
       headers = ["header1", "header2"]
       string = "[header1]\n[header2]\n"
       @parser.create_data(string)
