@@ -55,20 +55,37 @@ describe Parser do
   end
 
   describe "#key_value?" do
-    it "recognizes a standard key value" do
+    it "is true with proper key value" do
       string = "key:value\n"
       @parser.key_value?(string).should be(true)
     end
 
-    it "recognizes a key value with spaces around colon" do
+    it "is true with key value with spaces around colon" do
       string = "key :  value \n"
       @parser.key_value?(string).should be(true)
     end
 
-    it "does not recognize a key value with a space in column 1" do
+    it "is true with a key of multiple words" do
+      string = "key word: value\n"
+      @parser.key_value?(string).should be(true)
+    end
+
+    it "is false with key value with a space in column 1" do
       string = " key:value\n"
       @parser.key_value?(string).should be(false)
     end
+
+    it "is false with no colon" do
+      string = " key value"
+      @parser.key_value?(string).should be(false)
+    end
+
+    it "is false with only a colon" do
+      string = " :"
+      @parser.key_value?(string).should be(false)
+    end
+  end
+
   describe "#value_remainder?" do
     it "is true with one whitespace followed by string" do
       string = " remaining value string"
@@ -121,6 +138,12 @@ describe Parser do
     before :each do
       @parser = Parser.new("config.txt")
     end
+
+    it "contains default data" do
+      @parser.create_data
+      @parser.data.should_not be_empty
+    end
+
     it "contains headers" do
       headers = ["header1", "header2"]
       string = "[header1]\n[header2]\n"
