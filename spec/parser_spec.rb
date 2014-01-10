@@ -69,6 +69,26 @@ describe Parser do
       string = " key:value\n"
       @parser.key_value?(string).should be(false)
     end
+  describe "#value_remainder?" do
+    it "is true with one whitespace followed by string" do
+      string = " remaining value string"
+      @parser.value_remainder?(string).should be(true)
+    end
+
+    it "is true with multiple whitespaces followed by string" do
+      string = "    remaining value string"
+      @parser.value_remainder?(string).should be(true)
+    end
+
+    it "is false with no whitespaces" do
+      string = "improperly formated line"
+      @parser.value_remainder?(string).should be(false)
+    end
+
+    it "is false with only whitespaces" do
+      string = "          "
+      @parser.value_remainder?(string).should be(false)
+    end
   end
 
   describe "#extract_key_value" do
@@ -80,6 +100,13 @@ describe Parser do
     it "returns a key value from a standard key value" do
       string = "key:value\n"
       @parser.extract_key_value(string).should eql({'key' => 'value'})
+    end
+  end
+
+  describe "#extract_value_remainder" do
+    it "returns string from a value_remainder line" do
+      string = "  remaining value string"
+      @parser.extract_value_remainder(string).should eql("remaining value string")
     end
   end
 
@@ -105,6 +132,12 @@ describe Parser do
       string = "[header1 ]\napple: red\n"
       @parser.create_data(string)
       @parser.data.should eql( {'header1' => {'apple' => 'red'}} )
+    end
+
+    it "adds value remainders to preceding value" do
+      string = "[header1 ]\napple: red apples are\n the best"
+      @parser.create_data(string)
+      @parser.data.should eql( {'header1' => {'apple' => 'red apples are the best'}})
     end
   end
 

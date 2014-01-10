@@ -17,15 +17,21 @@ class Parser
     headers
   end
 
-  def create_data(string)
+  def create_data(string = original_string)
     current_header = ''
+    current_key = ''
     string.each_line do |line|
-      if header?(line)
+      case
+      when header?(line)
         current_header = extract_header(line)
         @data[current_header] = {}
-      elsif key_value?(line)
+      when key_value?(line)
         current_key_value = extract_key_value(line)
-        @data[current_header][current_key_value.keys.first] = current_key_value.values.first
+        current_key = current_key_value.keys.first
+        @data[current_header][current_key] = current_key_value.values.first
+      when value_remainder?(line)
+        value_string = extract_value_remainder(line)
+        @data[current_header][current_key] << " #{value_string}"
       end
     end
     @data
@@ -39,6 +45,10 @@ class Parser
     !!(string =~ key_value_match)
   end
 
+  def value_remainder?(string)
+    !!(string =~ remainder_match)
+  end
+
   def extract_header(string)
     string.match(header_match)[1]
   end
@@ -48,6 +58,10 @@ class Parser
     Hash[*key_value_array]
   end
 
+  def extract_value_remainder(string)
+    string.match(remainder_match)[1]
+  end
+
   private
   def header_match
     /^\[\W*([a-zA-Z0-9 ]+\b)\W*\]/
@@ -55,7 +69,11 @@ class Parser
   end
 
   def key_value_match
-    /^\w+\s*:\s*\w+\s*/
+    /^\S.*:\s*\w+\s*/
+  end
+
+  def remainder_match
+    /^\s+(\S.*)/
   end
 
 end
