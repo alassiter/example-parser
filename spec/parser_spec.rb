@@ -127,6 +127,23 @@ describe Parser do
     end
   end
 
+  describe "#set_value_type" do
+    it "returns a float" do
+      string = "10.4"
+      @parser.set_value_type(string).should be_a(Float)
+    end
+
+    it "returns an integer" do
+      string = "10"
+      @parser.set_value_type(string).should be_a(Integer)
+    end
+
+    it "defaults to string" do
+      string = "Not the number 10"
+      @parser.set_value_type(string).should be_a(String)
+    end
+  end
+
   describe "#headers" do
     it "returns an array of headers" do
       array = ["header", "meta data", "trailer"]
@@ -161,6 +178,12 @@ describe Parser do
       string = "[header1 ]\napple: red apples are\n the best"
       @parser.create_data(string)
       @parser.data.should eql( {'header1' => {'apple' => 'red apples are the best'}})
+    end
+
+    it "properly changes the type of value" do
+      string = "[movie]\ntitle:A Red Furnace\nprice:10.4\nqty:5"
+      @parser.create_data(string)
+      @parser.data.should eql( {'movie' => {'title' => 'A Red Furnace', 'price' => 10.4, 'qty' => 5}} )
     end
   end
 
