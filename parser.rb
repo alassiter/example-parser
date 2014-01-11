@@ -1,9 +1,10 @@
 class Parser
-  attr_reader :original_string
+  attr_reader :original_string, :filename
   attr_accessor :data
 
-  def initialize(file)
-    @original_string = File.read(file)
+  def initialize(filename)
+    @filename = filename
+    @original_string = File.read(filename)
     @data = {}
   end
 
@@ -35,6 +36,10 @@ class Parser
       end
     end
     @data
+  end
+
+  def write_data
+    File.open(filename, "w"){ |file| file.write stringify(data) }
   end
 
   def header?(string)
@@ -85,6 +90,18 @@ class Parser
 
   def remainder_match
     /^\s+(\S.*)/
+  end
+
+  def stringify(hash)
+    new_string = ""
+    headers = hash.keys
+    headers.each do |header|
+      new_string << "[#{header}]\n"
+      hash[header].each do |k,v|
+        new_string << "#{k}:#{v}\n"
+      end
+    end
+    new_string
   end
 
 end

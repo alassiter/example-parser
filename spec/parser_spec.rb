@@ -7,7 +7,14 @@ describe Parser do
 
   describe "initialize" do
     it "reads the config file" do
-      @parser.original_string.should eql(File.read("config.txt"))
+      filename = "config.txt"
+      @parser.original_string.should eql(File.read(filename))
+    end
+
+    it "contains the initiating filename" do
+      filename = "config.txt"
+      @parser = Parser.new(filename)
+      @parser.filename.should eql(filename)
     end
 
     it "has a data attribute" do
@@ -144,6 +151,42 @@ describe Parser do
     end
   end
 
+  describe "#write_parameter" do
+    before :each do
+      test_file = create_test_file("[example data]\ntitle:example title\ncost:4.5")
+      @parser = Parser.new(test_file)
+      @parser.create_data()
+    end
+
+    it "writes a change to a file" do
+      @parser.data["example data"]["title"] = "new title"
+      @parser.write_data
+      parser_two = Parser.new(@parser.filename)
+      parser_two.create_data
+      parser_two.data["example data"]["title"].should eql("new title")
+    end
+
+    it "sets new string value" do
+      parser_two = set_new_value("example data", "title", "new title")
+      parser_two.data["example data"]["title"].should be_a(String)
+    end
+
+    it "returns the new value" do
+      parser_two = set_new_value("example data", "title", "new title")
+      parser_two.data["example data"]["title"].should eql("new title")
+    end
+
+    it "sets new integer value" do
+      parser_two = set_new_value("example data", "cost", 5)
+      parser_two.data["example data"]["cost"].should be_a(Integer)
+    end
+
+    it "sets new floating point value" do
+      parser_two = set_new_value("example data", "cost", 4.5)
+      parser_two.data["example data"]["cost"].should be_a(Float)
+    end
+  end
+
   describe "#headers" do
     it "returns an array of headers" do
       array = ["header", "meta data", "trailer"]
@@ -185,6 +228,20 @@ describe Parser do
       @parser.create_data(string)
       @parser.data.should eql( {'movie' => {'title' => 'A Red Furnace', 'price' => 10.4, 'qty' => 5}} )
     end
+  end
+
+  def create_test_file(string)
+    filename = "test.txt"
+    File.open(filename, "w"){|file| file.write(string)}
+    filename
+  end
+
+  def set_new_value(header, key, new_value)
+    @parser.data[header][key] = new_value
+    @parser.write_data
+    parser_two = Parser.new(@parser.filename)
+    parser_two.create_data
+    parser_two
   end
 
 end
