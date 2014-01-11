@@ -28,7 +28,7 @@ class Parser
       when key_value?(line)
         current_key_value = extract_key_value(line)
         current_key = current_key_value.keys.first
-        @data[current_header][current_key] = set_value_type(current_key_value.values.first)
+        @data[current_header][current_key] = process_value_type(current_key_value.values.first)
       when value_remainder?(line)
         value_string = extract_value_remainder(line)
         @data[current_header][current_key] << " #{value_string}"
@@ -58,7 +58,7 @@ class Parser
     Hash[*key_value_array]
   end
 
-  def set_value_type(value)
+  def process_value_type(value)
     case
     when value.to_f.to_s == value
       value.to_f

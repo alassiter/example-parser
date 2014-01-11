@@ -127,20 +127,20 @@ describe Parser do
     end
   end
 
-  describe "#set_value_type" do
+  describe "#process_value_type" do
     it "returns a float" do
       string = "10.4"
-      @parser.set_value_type(string).should be_a(Float)
+      @parser.process_value_type(string).should be_a(Float)
     end
 
     it "returns an integer" do
       string = "10"
-      @parser.set_value_type(string).should be_a(Integer)
+      @parser.process_value_type(string).should be_a(Integer)
     end
 
     it "defaults to string" do
       string = "Not the number 10"
-      @parser.set_value_type(string).should be_a(String)
+      @parser.process_value_type(string).should be_a(String)
     end
   end
 
