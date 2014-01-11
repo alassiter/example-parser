@@ -6,10 +6,10 @@ Thought Process
 - if its a key:value pair, add it to the hash
 - if there's a blank at the beginning, add the line to the previous value
 - change the value type to either Integer, Float or String
-
-TODO:
 - allow the setting of a value
 - write the new settings to a file
+
+TODO:
 - build an interface to run from the command line
   - present possible headers
   - once inside a header, present possible keys to get values
@@ -17,3 +17,4 @@ TODO:
 
 If there's time:
 - Create a Section class to encapsulate header > key > value functionality
+- Introduce some exception handling if user allowed to input requested header and key
